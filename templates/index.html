@@ -3,13 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Olol Films - Add Your Movies</title>
+  <title>Olol Films - Movie Library</title>
   <style>
     body {
       margin: 0;
       font-family: Arial, sans-serif;
       background-color: #141414;
       color: #fff;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
     }
     header {
       text-align: center;
@@ -56,6 +59,31 @@
       border-radius: 0 4px 4px 0;
       cursor: pointer;
     }
+    .search-bar {
+      display: flex;
+      justify-content: center;
+      padding: 1rem;
+      background: #1c1c1c;
+    }
+    .search-bar input {
+      width: 50%;
+      padding: 0.5rem;
+      border-radius: 4px;
+      border: none;
+    }
+    .trending {
+      padding: 1rem 2rem;
+      background: #1c1c1c;
+    }
+    .trending h2 {
+      margin: 0 0 1rem;
+      font-size: 1.2rem;
+    }
+    .trending ul {
+      padding-left: 1rem;
+      list-style-type: disc;
+      color: #ff9800;
+    }
     .movie-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -79,7 +107,34 @@
       font-size: 0.9rem;
       color: #ccc;
     }
+    .genre-labels {
+      font-size: 0.75rem;
+      color: #aaa;
+      margin-bottom: 0.5rem;
+    }
+    footer {
+      background: #000;
+      color: #888;
+      text-align: center;
+      padding: 1rem;
+      margin-top: auto;
+    }
   </style>
+  <script>
+    function filterMovies() {
+      const input = document.getElementById('searchInput').value.toLowerCase();
+      const movies = document.getElementsByClassName('movie');
+
+      for (let i = 0; i < movies.length; i++) {
+        const title = movies[i].querySelector('h3').innerText.toLowerCase();
+        if (title.includes(input)) {
+          movies[i].style.display = "block";
+        } else {
+          movies[i].style.display = "none";
+        }
+      }
+    }
+  </script>
 </head>
 <body>
   <header>
@@ -88,21 +143,44 @@
 
   <nav>
     <a href="/">Home</a>
+    <a href="/admin">Admin</a>
   </nav>
 
+  <div class="search-bar">
+    <input type="text" id="searchInput" onkeyup="filterMovies()" placeholder="Search movies...">
+  </div>
+
+  <div class="trending">
+    <h2>🔥 Trending Now</h2>
+    <ul>
+      <li>Oppenheimer</li>
+      <li>John Wick: Chapter 4</li>
+      <li>Dune: Part Two</li>
+      <li>The Batman</li>
+      <li>Everything Everywhere All At Once</li>
+    </ul>
+  </div>
+
+  {% if show_form %}
   <form method="POST" action="/add">
     <input type="text" name="title" placeholder="Enter movie title" required>
     <button type="submit">Add Movie</button>
   </form>
+  {% endif %}
 
   <div class="movie-grid">
     {% for movie in movies %}
     <div class="movie">
       <img src="{{ movie.poster }}" alt="{{ movie.title }} poster">
+      <div class="genre-labels">{{ movie.genre }}</div>
       <h3>{{ movie.title }}</h3>
       <p>{{ movie.plot }}</p>
     </div>
     {% endfor %}
   </div>
+
+  <footer>
+    <p>© 2025 Ololfilms · Built with Flask · All rights reserved.</p>
+  </footer>
 </body>
 </html>
